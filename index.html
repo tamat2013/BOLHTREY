@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOLHTRY – ספר החוקים הרשמי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&family=Black+Han+Sans&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ball1: #39ff14;
+  --ball2: #ffe600;
+  --ball3: #ff2200;
+  --dark: #0a0a0f;
+  --darker: #050508;
+  --card: #111118;
+  --card2: #16161f;
+  --border: rgba(255,255,255,0.06);
+  --text: #e8e8f0;
+  --muted: #6b6b80;
+  --accent: #6c63ff;
+  --white: #ffffff;
+  --radius: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--darker);
+  color: var(--text);
+  font-family: 'Rubik', sans-serif;
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--darker); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,0.18) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 50% at 10% 80%, rgba(57,255,20,0.07) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 90% 80%, rgba(255,34,0,0.07) 0%, transparent 60%);
+}
+
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+
+.hero-balls {
+  position: absolute; inset: 0; pointer-events: none;
+}
+
+.float-ball {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0.15;
+  animation: floatBall linear infinite;
+}
+
+.fb1 { width:80px;height:80px;background:var(--ball1);left:8%;top:20%;animation-duration:18s;animation-delay:0s; }
+.fb2 { width:120px;height:120px;background:var(--ball2);right:12%;top:30%;animation-duration:22s;animation-delay:-5s; }
+.fb3 { width:100px;height:100px;background:var(--ball3);left:20%;bottom:20%;animation-duration:15s;animation-delay:-9s; }
+.fb4 { width:60px;height:60px;background:var(--ball1);right:8%;bottom:15%;animation-duration:20s;animation-delay:-3s; }
+.fb5 { width:40px;height:40px;background:var(--ball3);left:50%;top:10%;animation-duration:25s;animation-delay:-12s; }
+
+@keyframes floatBall {
+  0%   { transform: translate(0,0) scale(1); opacity:0.12; }
+  25%  { transform: translate(30px,-50px) scale(1.1); opacity:0.2; }
+  50%  { transform: translate(-20px,-100px) scale(0.9); opacity:0.15; }
+  75%  { transform: translate(50px,-60px) scale(1.05); opacity:0.18; }
+  100% { transform: translate(0,0) scale(1); opacity:0.12; }
+}
+
+.hero-tag {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  background: rgba(108,99,255,0.1);
+  border: 1px solid rgba(108,99,255,0.3);
+  padding: 0.4rem 1.2rem;
+  border-radius: 100px;
+  display: inline-block;
+  animation: fadeSlideDown 0.8s ease forwards;
+}
+
+.hero-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, #c0bcff 50%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  animation: fadeSlideDown 0.8s ease 0.1s both;
+}
+
+.hero-logo::after {
+  content: 'BOLHTRY';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--ball1), var(--ball2), var(--ball3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.hero-logo:hover::after { opacity: 1; }
+
+.hero-subtitle {
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  font-weight: 300;
+  color: rgba(232,232,240,0.7);
+  margin: 1rem 0 0.5rem;
+  animation: fadeSlideDown 0.8s ease 0.2s both;
+}
+
+.hero-authors {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+  animation: fadeSlideDown 0.8s ease 0.3s both;
+}
+.hero-authors span { color: var(--accent); }
+
+.hero-balls-row {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  animation: fadeSlideDown 0.8s ease 0.4s both;
+}
+
+.mini-ball {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: var(--darker);
+  position: relative;
+  cursor: default;
+  transition: transform 0.3s;
+  box-shadow: 0 0 24px rgba(0,0,0,0.6);
+}
+.mini-ball:hover { transform: scale(1.18) translateY(-4px); }
+.ball-green { background: var(--ball1); box-shadow: 0 0 30px rgba(57,255,20,0.4); }
+.ball-yellow { background: var(--ball2); box-shadow: 0 0 30px rgba(255,230,0,0.4); }
+.ball-red { background: var(--ball3); box-shadow: 0 0 30px rgba(255,34,0,0.4); }
+
+.hero-nav {
+  display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+  animation: fadeSlideDown 0.8s ease 0.5s both;
+}
+.nav-btn {
+  padding: 0.7rem 1.6rem;
+  border-radius: 100px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+  display: inline-block;
+}
+.nav-btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  box-shadow: 0 0 20px rgba(108,99,255,0.4);
+}
+.nav-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(108,99,255,0.5); background: #7b73ff; }
+.nav-btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.nav-btn-outline:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
+
+.scroll-hint {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  color: var(--muted); font-size: 0.75rem;
+  animation: fadeSlideDown 1s ease 1s both;
+}
+.scroll-arrow {
+  width: 20px; height: 20px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  animation: bounceDown 1.5s ease infinite;
+}
+@keyframes bounceDown { 0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(6px)} }
+
+@keyframes fadeSlideDown {
+  from { opacity:0; transform: translateY(-20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── SECTION HEADERS ── */
+.section {
+  padding: 5rem 0;
+  position: relative;
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 2px;
+  color: var(--accent);
+  background: rgba(108,99,255,0.08);
+  border: 1px solid rgba(108,99,255,0.2);
+  padding: 0.3rem 1rem;
+  border-radius: 100px;
+  margin-bottom: 1.2rem;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.6rem;
+}
+
+.section-sub {
+  color: var(--muted);
+  font-size: 1rem;
+  margin-bottom: 3rem;
+  max-width: 500px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  margin: 0;
+}
+
+/* ── GOAL SECTION ── */
+.goal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.goal-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.goal-number {
+  font-size: 5rem;
+  font-weight: 900;
+  font-family: 'Orbitron', monospace;
+  background: linear-gradient(135deg, var(--accent), #a09bff);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.goal-text { font-size: 1.15rem; line-height: 1.8; color: rgba(232,232,240,0.85); max-width: 600px; }
+.goal-warning {
+  margin-top: 1.5rem;
+  padding: 1rem 1.4rem;
+  background: rgba(255,34,0,0.06);
+  border: 1px solid rgba(255,34,0,0.2);
+  border-radius: 10px;
+  color: rgba(232,232,240,0.8);
+  font-size: 0.95rem;
+  display: flex; gap: 0.7rem; align-items: flex-start;
+}
+
+/* ── BALLS SECTION ── */
+.balls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.ball-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.ball-card:hover { transform: translateY(-4px); }
+.ball-card.b1:hover { border-color: rgba(57,255,20,0.3); }
+.ball-card.b2:hover { border-color: rgba(255,230,0,0.3); }
+.ball-card.b3:hover { border-color: rgba(255,34,0,0.3); }
+.ball-card.b1 { background: linear-gradient(135deg, var(--card) 60%, rgba(57,255,20,0.04)); }
+.ball-card.b2 { background: linear-gradient(135deg, var(--card) 60%, rgba(255,230,0,0.04)); }
+.ball-card.b3 { background: linear-gradient(135deg, var(--card) 60%, rgba(255,34,0,0.04)); }
+
+.ball-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.ball-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; font-weight: 900; color: var(--darker);
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.ball-name-wrap {}
+.ball-number { font-family: 'Orbitron', monospace; font-size: 0.7rem; letter-spacing: 2px; color: var(--muted); }
+.ball-name { font-size: 1.3rem; font-weight: 800; }
+
+.ball-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.8rem; margin-bottom: 1.2rem;
+}
+.stat {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+}
+.stat-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 1px; margin-bottom: 0.3rem; }
+.stat-value { font-size: 1.1rem; font-weight: 700; }
+.ball-desc { font-size: 0.9rem; color: rgba(232,232,240,0.6); line-height: 1.7; }
+
+/* ── ARENA ── */
+.arena-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media(max-width:700px){ .arena-grid { grid-template-columns:1fr; } }
+
+.arena-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  transition: border-color 0.3s;
+}
+.arena-card:hover { border-color: rgba(108,99,255,0.3); }
+.arena-edition {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem; letter-spacing: 3px;
+  color: var(--accent); text-transform: uppercase;
+}
+.arena-title { font-size: 1.4rem; font-weight: 800; }
+.arena-diam {
+  font-size: 2.8rem; font-weight: 900;
+  font-family: 'Orbitron', monospace;
+  background: linear-gradient(135deg, var(--accent), #c0bcff);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.arena-visual {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem 0;
+}
+.arena-circle {
+  border-radius: 50%;
+  border: 2px dashed rgba(108,99,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  background: radial-gradient(circle, rgba(108,99,255,0.06) 0%, transparent 70%);
+}
+.arena-circle-inner {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.arena-label-center {
+  font-family: 'Orbitron', monospace; font-size: 0.6rem;
+  color: var(--accent); letter-spacing: 1px;
+  text-align: center;
+}
+.arena-net-label {
+  font-size: 0.8rem; color: var(--muted); text-align: center; margin-top: 0.5rem;
+}
+
+/* ── RULES SECTION ── */
+.rules-grid { display: grid; gap: 1.2rem; }
+
+.rule-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  transition: border-color 0.25s;
+  cursor: default;
+}
+.rule-card:hover { border-color: rgba(255,255,255,0.12); }
+
+.rule-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+}
+.rule-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+  background: rgba(108,99,255,0.1);
+}
+.rule-title { font-size: 1.05rem; font-weight: 700; }
+.rule-subtitle { font-size: 0.8rem; color: var(--muted); }
+.rule-body { font-size: 0.9rem; color: rgba(232,232,240,0.72); line-height: 1.75; }
+.rule-body strong { color: var(--text); }
+
+.rule-highlight {
+  display: inline-block;
+  background: rgba(108,99,255,0.12);
+  border: 1px solid rgba(108,99,255,0.2);
+  border-radius: 6px; padding: 0.15rem 0.5rem;
+  color: #b0abff; font-weight: 600;
+}
+
+/* Opening Rules tabs */
+.tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.tab-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 100px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.tab-btn:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.opening-steps {
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.step {
+  display: flex; gap: 1.2rem; align-items: flex-start;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700;
+  flex-shrink: 0; color: white;
+}
+.step-text { font-size: 0.9rem; line-height: 1.7; color: rgba(232,232,240,0.8); }
+.step-text strong { color: var(--text); }
+
+/* Forbidden rules */
+.forbidden-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.forbidden-card {
+  background: rgba(255,34,0,0.04);
+  border: 1px solid rgba(255,34,0,0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+.forbidden-card:hover { border-color: rgba(255,34,0,0.3); }
+.forbidden-title {
+  font-size: 1rem; font-weight: 700;
+  color: var(--ball3); margin-bottom: 0.7rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.forbidden-body { font-size: 0.87rem; color: rgba(232,232,240,0.65); line-height: 1.7; }
+
+/* Win condition */
+.win-card {
+  background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(57,255,20,0.04));
+  border: 1px solid rgba(108,99,255,0.25);
+  border-radius: var(--radius);
+  padding: 3rem 2.5rem;
+  text-align: center;
+}
+.win-trophy { font-size: 4rem; margin-bottom: 1rem; }
+.win-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 1rem; }
+.win-text { color: rgba(232,232,240,0.7); font-size: 1rem; max-width: 500px; margin: 0 auto; line-height: 1.8; }
+
+/* ── SCOREBOARD ── */
+.score-section {
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.score-header {
+  background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(57,255,20,0.05));
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+}
+.score-header-title { font-size: 1.3rem; font-weight: 800; }
+.score-header-sub { font-size: 0.85rem; color: var(--muted); }
+
+.score-controls {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+}
+
+.input-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.input-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.5px; }
+.score-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  color: var(--text);
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.9rem;
+  width: 180px;
+  transition: border-color 0.2s;
+}
+.score-input:focus { outline: none; border-color: var(--accent); }
+.score-input::placeholder { color: var(--muted); }
+
+.score-btn {
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  align-self: flex-end;
+}
+.score-btn-add { background: var(--accent); color: white; }
+.score-btn-add:hover { background: #7b73ff; transform: translateY(-1px); }
+.score-btn-reset { background: rgba(255,34,0,0.15); color: var(--ball3); border: 1px solid rgba(255,34,0,0.2); }
+.score-btn-reset:hover { background: rgba(255,34,0,0.25); }
+.score-btn-clear { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+.score-btn-clear:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+
+.players-area { padding: 1.5rem 2rem; }
+.players-empty {
+  text-align: center; padding: 3rem;
+  color: var(--muted); font-size: 0.95rem;
+}
+.players-empty span { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+
+.players-list { display: grid; gap: 1rem; }
+
+.player-row {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  display: flex; align-items: center; gap: 1rem;
+  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.player-row.is-winner {
+  border-color: rgba(108,99,255,0.5);
+  background: rgba(108,99,255,0.06);
+}
+.player-row.is-eliminated {
+  opacity: 0.45;
+  border-color: rgba(255,34,0,0.15);
+  background: rgba(255,34,0,0.02);
+}
+.player-row.just-reset {
+  animation: flashReset 0.6s ease;
+}
+@keyframes flashReset {
+  0%,100% { background: rgba(255,255,255,0.02); }
+  50% { background: rgba(255,34,0,0.12); }
+}
+
+.player-rank {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700; color: var(--muted);
+  flex-shrink: 0;
+}
+.player-rank.rank-1 { background: rgba(255,215,0,0.15); color: gold; }
+.player-rank.rank-2 { background: rgba(192,192,192,0.15); color: silver; }
+.player-rank.rank-3 { background: rgba(205,127,50,0.15); color: #cd7f32; }
+
+.player-info { flex: 1; min-width: 0; }
+.player-name { font-weight: 700; font-size: 1rem; }
+.player-status {
+  font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem;
+}
+
+.hits-display {
+  display: flex; gap: 0.4rem; align-items: center;
+  flex-shrink: 0;
+}
+.hit-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.hit-circle.hit-0 { border-color: rgba(57,255,20,0.3); background: transparent; color: var(--muted); }
+.hit-circle.hit-0.filled { background: var(--ball1); border-color: var(--ball1); color: var(--darker); box-shadow: 0 0 12px rgba(57,255,20,0.5); }
+.hit-circle.hit-1 { border-color: rgba(255,230,0,0.3); background: transparent; color: var(--muted); }
+.hit-circle.hit-1.filled { background: var(--ball2); border-color: var(--ball2); color: var(--darker); box-shadow: 0 0 12px rgba(255,230,0,0.5); }
+.hit-circle.hit-2 { border-color: rgba(255,34,0,0.3); background: transparent; color: var(--muted); }
+.hit-circle.hit-2.filled { background: var(--ball3); border-color: var(--ball3); color: var(--darker); box-shadow: 0 0 12px rgba(255,34,0,0.5); }
+.hit-circle.eliminated { background: rgba(255,34,0,0.2); border-color: rgba(255,34,0,0.4); }
+
+.player-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+.pa-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.pa-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.pa-btn-hit { color: var(--accent); border-color: rgba(108,99,255,0.3); }
+.pa-btn-hit:hover { background: rgba(108,99,255,0.1); }
+.pa-btn-reset-player { color: var(--ball3); border-color: rgba(255,34,0,0.2); }
+.pa-btn-reset-player:hover { background: rgba(255,34,0,0.08); }
+.pa-btn-del { color: var(--muted); }
+.pa-btn-del:hover { color: var(--ball3); border-color: rgba(255,34,0,0.2); }
+
+.winner-badge {
+  position: absolute; top: 0.5rem; left: 0.8rem;
+  font-size: 0.65rem; font-weight: 700;
+  background: rgba(108,99,255,0.2); color: #b0abff;
+  border: 1px solid rgba(108,99,255,0.3);
+  border-radius: 100px; padding: 0.15rem 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+/* ── SELECT ATTACKER ── */
+.attacker-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  color: var(--text);
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.9rem;
+  width: 180px;
+  transition: border-color 0.2s;
+}
+.attacker-select:focus { outline: none; border-color: var(--accent); }
+
+/* ── NOTIFICATION ── */
+.notification {
+  position: fixed;
+  top: 1.5rem; left: 50%; transform: translateX(-50%) translateY(-100px);
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 9999;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.notification.show { transform: translateX(-50%) translateY(0); }
+.notification.type-reset { border-color: rgba(255,34,0,0.4); color: var(--ball3); }
+.notification.type-hit { border-color: rgba(108,99,255,0.4); color: #b0abff; }
+.notification.type-eliminated { border-color: rgba(255,230,0,0.4); color: var(--ball2); }
+.notification.type-comeback { border-color: rgba(57,255,20,0.4); color: var(--ball1); }
+.notification.type-win { border-color: rgba(108,99,255,0.6); color: #b0abff; }
+
+/* ── LED STRIP ── */
+.led-strip {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--ball1), var(--ball2), var(--ball3), var(--ball2), var(--ball1));
+  background-size: 200% 100%;
+  animation: ledScroll 3s linear infinite;
+  margin-bottom: 2px;
+}
+@keyframes ledScroll { 0%{background-position:0%}100%{background-position:200%} }
+
+/* ── FOOTER ── */
+footer {
+  padding: 3rem 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), #c0bcff);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px) {
+  .score-controls { flex-direction: column; }
+  .score-input, .attacker-select { width: 100%; }
+  .player-row { flex-wrap: wrap; gap: 0.8rem; }
+  .balls-grid { grid-template-columns: 1fr; }
+}
+
+/* ── ACCORDION ── */
+details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+  transition: border-color 0.2s;
+}
+details:hover { border-color: rgba(255,255,255,0.1); }
+details[open] { border-color: rgba(108,99,255,0.3); }
+summary {
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  font-weight: 600; font-size: 1rem;
+  list-style: none;
+  user-select: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after {
+  content: '+';
+  font-size: 1.3rem;
+  color: var(--accent);
+  transition: transform 0.3s;
+}
+details[open] summary::after { transform: rotate(45deg); }
+.accordion-body {
+  padding: 0 1.5rem 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(232,232,240,0.72);
+  line-height: 1.8;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 0;
+}
+
+/* NAV sticky */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(5,5,8,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.7rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+}
+.sticky-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem; font-weight: 900;
+  color: white; letter-spacing: 1px;
+  text-decoration: none;
+}
+.sticky-links {
+  display: flex; gap: 0.3rem; flex-wrap: wrap;
+}
+.sticky-link {
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.sticky-link:hover, .sticky-link.active { color: white; background: rgba(255,255,255,0.07); }
+
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATION -->
+<div class="notification" id="notification"></div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="#top" class="sticky-logo">BOLHTRY</a>
+  <div class="sticky-links">
+    <a href="#goal" class="sticky-link">המטרה</a>
+    <a href="#balls" class="sticky-link">הכדורים</a>
+    <a href="#arena" class="sticky-link">הזירה</a>
+    <a href="#rules" class="sticky-link">חוקים</a>
+    <a href="#scoreboard" class="sticky-link">ניקוד</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-balls">
+    <div class="float-ball fb1"></div>
+    <div class="float-ball fb2"></div>
+    <div class="float-ball fb3"></div>
+    <div class="float-ball fb4"></div>
+    <div class="float-ball fb5"></div>
+  </div>
+  <div style="position:relative;z-index:1;">
+    <div class="hero-tag">🏆 המשחק הרשמי לטרמפולינות</div>
+    <h1 class="hero-logo">BOLHTRY</h1>
+    <p class="hero-subtitle">ספר החוקים הרשמי</p>
+    <p class="hero-authors">הומצא על ידי <span>איתן וכרמל פרבר</span></p>
+    <div class="hero-balls-row">
+      <div class="mini-ball ball-green">1</div>
+      <div class="mini-ball ball-yellow">2</div>
+      <div class="mini-ball ball-red">3</div>
+    </div>
+    <div class="hero-nav">
+      <a href="#goal" class="nav-btn nav-btn-primary">📖 קראו את החוקים</a>
+      <a href="#scoreboard" class="nav-btn nav-btn-outline">🏅 מעקב ניקוד</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    גלול למטה
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<div class="led-strip"></div>
+<div class="divider"></div>
+
+<!-- GOAL -->
+<section class="section" id="goal">
+  <div class="container">
+    <div class="section-badge">🎯 מטרת המשחק</div>
+    <h2 class="section-title">המטרה הכללית</h2>
+    <p class="section-sub">כיצד מדיחים שחקן מהמשחק?</p>
+
+    <div class="goal-card">
+      <div class="goal-number">×3</div>
+      <p class="goal-text">
+        כדי להדיח שחקן מהמשחק, עליכם לפגוע בו <strong>3 פעמים</strong> עם <strong>כדורים שונים</strong>.
+        המטרה היא לצבור שלוש פגיעות על אותו שחקן, כל אחת עם כדור אחר (1, 2 ו-3).
+      </p>
+      <div class="goal-warning">
+        <span style="font-size:1.3rem;">⚠️</span>
+        <div>
+          <strong>היזהרו – חוק האיפוס!</strong><br>
+          מספיק שחקן אחד שיפגע בכם עם כדור <em>אחד בלבד</em> כדי לאפס את כל התקדמות הפגיעות שלכם. כל הפגיעות שצברתם על שחקנים אחרים ייעלמו מיד!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BALLS -->
+<section class="section" id="balls">
+  <div class="container">
+    <div class="section-badge">🏀 הציוד הרשמי</div>
+    <h2 class="section-title">שלושת הכדורים האסימטריים</h2>
+    <p class="section-sub">כל כדור עשוי גומי רך וגמיש עם Grip מעולה לאחיזה ביד אחת</p>
+
+    <div class="balls-grid">
+      <!-- Ball 1 -->
+      <div class="ball-card b1">
+        <div class="ball-header">
+          <div class="ball-icon" style="background:var(--ball1);">1</div>
+          <div class="ball-name-wrap">
+            <div class="ball-number">BALL NO.1 · הירוק</div>
+            <div class="ball-name">🟢 "החץ"</div>
+          </div>
+        </div>
+        <div class="ball-stats">
+          <div class="stat">
+            <div class="stat-label">קוטר</div>
+            <div class="stat-value" style="color:var(--ball1);">14 ס"מ</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">משקל</div>
+            <div class="stat-value" style="color:var(--ball1);">120 גרם</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">צבע</div>
+            <div class="stat-value" style="color:var(--ball1);">ירוק זוהר</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">סיווג</div>
+            <div class="stat-value" style="color:var(--ball1);">קל</div>
+          </div>
+        </div>
+        <p class="ball-desc">קטן, מהיר וטס כמו חץ. מיועד להפתעות זריזות ותנועות בלתי צפויות.</p>
+      </div>
+
+      <!-- Ball 2 -->
+      <div class="ball-card b2">
+        <div class="ball-header">
+          <div class="ball-icon" style="background:var(--ball2);">2</div>
+          <div class="ball-name-wrap">
+            <div class="ball-number">BALL NO.2 · הצהוב</div>
+            <div class="ball-name">🟡 "הקלאסי"</div>
+          </div>
+        </div>
+        <div class="ball-stats">
+          <div class="stat">
+            <div class="stat-label">קוטר</div>
+            <div class="stat-value" style="color:var(--ball2);">18 ס"מ</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">משקל</div>
+            <div class="stat-value" style="color:var(--ball2);">180 גרם</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">צבע</div>
+            <div class="stat-value" style="color:var(--ball2);">צהוב בהיר</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">סיווג</div>
+            <div class="stat-value" style="color:var(--ball2);">בינוני</div>
+          </div>
+        </div>
+        <p class="ball-desc">הכדור המאוזן והרב-תכליתי לטווחים בינוניים. מתאים לרוב הסיטואציות.</p>
+      </div>
+
+      <!-- Ball 3 -->
+      <div class="ball-card b3">
+        <div class="ball-header">
+          <div class="ball-icon" style="background:var(--ball3);color:white;">3</div>
+          <div class="ball-name-wrap">
+            <div class="ball-number">BALL NO.3 · האדום</div>
+            <div class="ball-name">🔴 "התותח"</div>
+          </div>
+        </div>
+        <div class="ball-stats">
+          <div class="stat">
+            <div class="stat-label">קוטר</div>
+            <div class="stat-value" style="color:var(--ball3);">22 ס"מ</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">משקל</div>
+            <div class="stat-value" style="color:var(--ball3);">250 גרם</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">צבע</div>
+            <div class="stat-value" style="color:var(--ball3);">אדום אש</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">סיווג</div>
+            <div class="stat-value" style="color:var(--ball3);">כבד</div>
+          </div>
+        </div>
+        <p class="ball-desc">יציב מאוד באוויר, מרגיש חזק ומשמש להפגזות ישירות ואימפקט מוחץ.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARENA -->
+<section class="section" id="arena">
+  <div class="container">
+    <div class="section-badge">🎪 הזירה הרשמית</div>
+    <h2 class="section-title">זירת הטרמפולינה</h2>
+    <p class="section-sub">עיצוב עגול לריכוז טבעי של כל הפעולה למרכז</p>
+
+    <div class="arena-grid">
+      <!-- Home -->
+      <div class="arena-card">
+        <div>
+          <div class="arena-edition">HOME EDITION</div>
+          <div class="arena-title">גרסה ביתית</div>
+        </div>
+        <div class="arena-diam">⌀ 5 מ׳</div>
+        <div class="arena-visual">
+          <div class="arena-circle" style="width:160px;height:160px;">
+            <div class="arena-circle-inner" style="width:120px;height:120px;"></div>
+            <div class="arena-circle-inner" style="width:80px;height:80px;"></div>
+            <div class="arena-label-center">HOME<br>EDITION</div>
+          </div>
+        </div>
+        <div class="arena-net-label">🛡️ רשת פנימית צפופה לא-אלסטית</div>
+      </div>
+
+      <!-- Olympic -->
+      <div class="arena-card" style="border-color:rgba(108,99,255,0.2);">
+        <div>
+          <div class="arena-edition">OLYMPIC EDITION ⭐</div>
+          <div class="arena-title">גרסה אולימפית</div>
+        </div>
+        <div class="arena-diam" style="font-size:2.8rem;">⌀ 10 מ׳</div>
+        <div class="arena-visual">
+          <div class="arena-circle" style="width:180px;height:180px;border-color:rgba(108,99,255,0.5);">
+            <div class="arena-circle-inner" style="width:140px;height:140px;border-color:rgba(108,99,255,0.2);"></div>
+            <div class="arena-circle-inner" style="width:100px;height:100px;"></div>
+            <div class="arena-label-center" style="color:#b0abff;">OLYMPIC<br>EDITION</div>
+          </div>
+        </div>
+        <div class="arena-net-label">💡 מסגרת LED דינמית + מערכת חיישנים דיגיטלית</div>
+      </div>
+    </div>
+
+    <!-- Olympic tech -->
+    <div style="margin-top:2rem;">
+      <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;">⚡ מערכת האפקטים האלקטרונית (גרסה אולימפית)</h3>
+      <div class="accordion-body" style="padding:0;border:none;margin:0 0 1rem;">
+        <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;">מסגרת ה-LED מגיבה לאירועי המשחק בזמן אמת:</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.8rem;">
+        <div style="background:rgba(57,255,20,0.06);border:1px solid rgba(57,255,20,0.2);border-radius:10px;padding:1rem;">
+          <div style="color:var(--ball1);font-weight:700;margin-bottom:0.4rem;">🟢 פגיעה – כדור 1</div>
+          <div style="font-size:0.85rem;color:var(--muted);">המסגרת נדלקת כולה בירוק</div>
+        </div>
+        <div style="background:rgba(255,230,0,0.06);border:1px solid rgba(255,230,0,0.2);border-radius:10px;padding:1rem;">
+          <div style="color:var(--ball2);font-weight:700;margin-bottom:0.4rem;">🟡 פגיעה – כדור 2</div>
+          <div style="font-size:0.85rem;color:var(--muted);">המסגרת נדלקת כולה בצהוב</div>
+        </div>
+        <div style="background:rgba(255,34,0,0.06);border:1px solid rgba(255,34,0,0.2);border-radius:10px;padding:1rem;">
+          <div style="color:var(--ball3);font-weight:700;margin-bottom:0.4rem;">🔴 פגיעה – כדור 3</div>
+          <div style="font-size:0.85ff;color:var(--muted);">המסגרת נדלקת כולה באדום</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:1rem;">
+          <div style="color:var(--text);font-weight:700;margin-bottom:0.4rem;">🔄 איפוס</div>
+          <div style="font-size:0.85rem;color:var(--muted);">צבעים מסתחררים במהירות סביב המסגרת</div>
+        </div>
+        <div style="background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.2);border-radius:10px;padding:1rem;">
+          <div style="color:#b0abff;font-weight:700;margin-bottom:0.4rem;">🏆 הדחה / ניצחון</div>
+          <div style="font-size:0.85rem;color:var(--muted);">כל הפסים מהבהבים בצבעים חגיגיים</div>
+        </div>
+        <div style="background:rgba(57,255,20,0.04);border:1px solid rgba(57,255,20,0.15);border-radius:10px;padding:1rem;">
+          <div style="color:var(--ball1);font-weight:700;margin-bottom:0.4rem;">💫 קאמבק</div>
+          <div style="font-size:0.85rem;color:var(--muted);">גל של צבעים מופיעים ודועכים בזה אחר זה</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RULES -->
+<section class="section" id="rules">
+  <div class="container">
+    <div class="section-badge">⚙️ חוקי המשחק</div>
+    <h2 class="section-title">ספר החוקים</h2>
+    <p class="section-sub">כל החוקים הרשמיים של BOLHTRY</p>
+
+    <!-- Opening rules -->
+    <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;">🚦 חוקי הפתיחה</h3>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('tab2', this)">2 שחקנים</button>
+      <button class="tab-btn" onclick="switchTab('tab3', this)">3 שחקנים</button>
+      <button class="tab-btn" onclick="switchTab('tab4', this)">4+ שחקנים</button>
+    </div>
+
+    <div id="tab2" class="tab-panel active">
+      <div class="opening-steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">כל שחקן בוחר <strong>כדור אחד</strong> ביד (בחירה אסטרטגית!). הכדור השלישי מונח <strong>במרכז המשטח</strong>.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">שני השחקנים זורקים את כדוריהם <strong>בו-זמנית</strong> לאוויר וצועקים: <strong>"!BOLHTRY"</strong></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><strong>חוק הקרקוע:</strong> מרגע הזריקה, השחקנים קפואים במקומם ואסור להתקדם.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text"><strong>חוק נגיעת הרצפה:</strong> מותר לתפוס כדורים רק לאחר שנגעו פעם אחת ברצפה/משטח. לאחר מכן – מותר לנוע!</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text"><strong>חוק הכדור האמצעי:</strong> אסור לגעת בכדור שעל הרצפה עד שהכדורים שנזרקו נתפסו כחוק.</div></div>
+      </div>
+    </div>
+
+    <div id="tab3" class="tab-panel">
+      <div class="opening-steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">כל שחקן מתחיל עם <strong>כדור אחד בידו</strong> (אין כדור פנוי על הרצפה).</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">כולם זורקים את הכדורים <strong>יחד</strong> לאוויר וצועקים: <strong>"!BOLHTRY"</strong></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><strong>חוקי הקרקוע ונגיעת הרצפה</strong> חלים בדיוק אותו הדבר – קפואים עד שהכדורים נוגעים, אז מזנקים לתפוס!</div></div>
+      </div>
+    </div>
+
+    <div id="tab4" class="tab-panel">
+      <div class="opening-steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">לא זורקים כדורים בפתיחה. <strong>כל הכדורים מונחים יחד במרכז המגרש.</strong></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">השחקנים עומדים מסביב <strong>במרחק שווה</strong> מהמרכז.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">עם אות הזינוק – <strong>כולם רצים יחד למרכז</strong> לחטוף כדורים. תתחיל!</div></div>
+      </div>
+    </div>
+
+    <div style="height:2.5rem;"></div>
+
+    <!-- Combat rules -->
+    <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;">💥 חוקי הלחימה</h3>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-header">
+          <div class="rule-icon">🔄</div>
+          <div>
+            <div class="rule-title">חוק האיפוס הגלובלי</div>
+            <div class="rule-subtitle">Reset</div>
+          </div>
+        </div>
+        <div class="rule-body">
+          הפגיעות שצברתם על אחרים הן <strong>"הישג זמני"</strong> – שברירי מאוד.<br><br>
+          <strong>איפוס בפגיעה:</strong> אם שחקן כלשהו פוגע בכם עם <span class="rule-highlight">כדור אחד</span> – כל הפגיעות שצברתם מתאפסות מיד!<br><br>
+          הפגיעות מתאפסות רק בשני מקרים: 1) פגעו בכם, 2) הדחתם שחקן.
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-header">
+          <div class="rule-icon">🎯</div>
+          <div>
+            <div class="rule-title">צבירת פגיעות (מרובה משתתפים)</div>
+          </div>
+        </div>
+        <div class="rule-body">
+          כדי להדיח שחקן מסוים, אתם חייבים לפגוע <strong>באותו שחקן ספציפי</strong> 3 פעמים.<br><br>
+          פגיעות מפוזרות על שחקנים שונים <strong>לא יצטרפו</strong> להדחה!
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-header">
+          <div class="rule-icon">📏</div>
+          <div>
+            <div class="rule-title">חוק ההתרחקות לאחר פגיעה</div>
+          </div>
+        </div>
+        <div class="rule-body">
+          ברגע שפגעתם בשחקן יריב בהצלחה, עליכם <strong>להתרחק ממנו מיד</strong> (לקחת צעד קטן אחורה).<br><br>
+          החוק מונע "ספאם" של זריקות מטווח אפס ומבטיח לכל שחקן סיכוי הוגן.
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-header">
+          <div class="rule-icon">🔄</div>
+          <div>
+            <div class="rule-title">חוק הקאמבק</div>
+            <div class="rule-subtitle">נקמת המודחים</div>
+          </div>
+        </div>
+        <div class="rule-body">
+          ההדחה לא תמיד סוף הסיפור! אם שחקן <strong>א'</strong> הדיח את שחקן <strong>ב'</strong>, ושחקן <strong>ג'</strong> מצליח להדיח את שחקן <strong>א'</strong>:<br><br>
+          <span class="rule-highlight">שחקן א' אינו יוצא!</span> במקום זאת, שחקן ב' (וכל מי ששחקן א' הדיח) חוזר מיד למשחק!
+        </div>
+      </div>
+    </div>
+
+    <div style="height:2.5rem;"></div>
+
+    <!-- Forbidden rules -->
+    <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;">🚫 איסורים רשמיים</h3>
+    <div class="forbidden-grid">
+      <div class="forbidden-card">
+        <div class="forbidden-title">⚡ חוק ההתנגשות</div>
+        <div class="forbidden-body">אם שני כדורים מתנגשים זה בזה – הם הופכים ל<strong>"רעילים"</strong>. אסור לאף אחד לגעת בהם עד שמישהו מרים את הכדור השלישי.</div>
+      </div>
+      <div class="forbidden-card">
+        <div class="forbidden-title">🦆 איסור דגירה</div>
+        <div class="forbidden-body">אסור לשמור כדורים מבלי לזרוק! ברגע שהרמתם כדור – <strong>חובה לזרוק</strong> ולכוון ליריב.</div>
+      </div>
+      <div class="forbidden-card">
+        <div class="forbidden-title">🔁 איסור זריקה רצופה</div>
+        <div class="forbidden-body">אסור לזרוק <strong>אותו כדור יותר מ-2 פעמים ברצף</strong>. חובה לגוון ולהשתמש בכדורים האחרים.</div>
+      </div>
+    </div>
+
+    <div style="height:2.5rem;"></div>
+
+    <!-- Win -->
+    <div class="win-card">
+      <div class="win-trophy">🏆</div>
+      <div class="win-title">תנאי הניצחון</div>
+      <p class="win-text">השחקן האחרון שנשאר יציב על הטרמפולינה לאחר שהדיח את כל השאר – מוכרז <strong>מנצח המשחק!</strong></p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCOREBOARD -->
+<section class="section" id="scoreboard">
+  <div class="container">
+    <div class="section-badge">🏅 ניהול המשחק</div>
+    <h2 class="section-title">לוח מעקב ניקוד</h2>
+    <p class="section-sub">הוסיפו שחקנים, עקבו אחר הפגיעות וקיבלו ניהול משחק חי</p>
+
+    <div class="score-section">
+      <div class="score-header">
+        <div>
+          <div class="score-header-title">🎮 ניהול משחק חי</div>
+          <div class="score-header-sub" id="game-status">הוסיפו שחקנים כדי להתחיל</div>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="score-btn score-btn-clear" onclick="clearAll()">🗑️ נקה הכל</button>
+        </div>
+      </div>
+
+      <div class="score-controls">
+        <div class="input-group">
+          <div class="input-label">הוסף שחקן</div>
+          <input class="score-input" id="player-name-input" type="text" placeholder="שם השחקן..." onkeydown="if(event.key==='Enter') addPlayer()" />
+        </div>
+        <button class="score-btn score-btn-add" onclick="addPlayer()">➕ הוסף שחקן</button>
+
+        <div style="width:1px;height:40px;background:var(--border);align-self:flex-end;margin:0 0.5rem;"></div>
+
+        <div class="input-group">
+          <div class="input-label">תוקף (שמכה)</div>
+          <select class="attacker-select" id="attacker-select">
+            <option value="">בחר תוקף...</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <div class="input-label">מותקף</div>
+          <select class="attacker-select" id="target-select">
+            <option value="">בחר מותקף...</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <div class="input-label">כדור</div>
+          <select class="attacker-select" id="ball-select" style="width:130px;">
+            <option value="0">🟢 כדור 1</option>
+            <option value="1">🟡 כדור 2</option>
+            <option value="2">🔴 כדור 3</option>
+          </select>
+        </div>
+        <button class="score-btn score-btn-add" onclick="registerHit()">💥 רשום פגיעה</button>
+      </div>
+
+      <div class="players-area" id="players-area">
+        <div class="players-empty" id="empty-state">
+          <span>🏀</span>
+          הוסיפו שחקנים כדי להתחיל לעקוב אחר המשחק
+        </div>
+        <div class="players-list" id="players-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">BOLHTRY</div>
+  <p>© כל הזכויות שמורות לאיתן פרבר וכרמל פרבר, 2026</p>
+  <p style="margin-top:0.4rem;">המשחק הרשמי לטרמפולינות – ולכל משטח אחר</p>
+</footer>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let players = []; // { id, name, hits:[false,false,false], eliminated:bool, eliminatedBy:id|null }
+let eliminatedByMap = {}; // id -> [list of eliminated player ids]
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── NOTIFICATION ────────────────────────────────────────────────────────────
+let notifTimer;
+function showNotif(msg, type='hit') {
+  const el = document.getElementById('notification');
+  el.textContent = msg;
+  el.className = 'notification show type-' + type;
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ─── PLAYER MANAGEMENT ───────────────────────────────────────────────────────
+function addPlayer() {
+  const input = document.getElementById('player-name-input');
+  const name = input.value.trim();
+  if (!name) return;
+  if (players.find(p => p.name === name)) { showNotif('שחקן בשם זה כבר קיים!', 'reset'); return; }
+  players.push({ id: Date.now() + Math.random(), name, hits: [false, false, false], eliminated: false, eliminatedBy: null });
+  input.value = '';
+  renderAll();
+  showNotif(`✅ ${name} נוסף למשחק`, 'hit');
+}
+
+function removePlayer(id) {
+  players = players.filter(p => p.id !== id);
+  delete eliminatedByMap[id];
+  // Remove from other eliminatedBy lists
+  for (let key in eliminatedByMap) {
+    eliminatedByMap[key] = eliminatedByMap[key].filter(x => x !== id);
+  }
+  renderAll();
+}
+
+function resetPlayerHits(id) {
+  const p = players.find(x => x.id === id);
+  if (!p) return;
+  p.hits = [false, false, false];
+  p.eliminated = false;
+  p.eliminatedBy = null;
+  const row = document.getElementById('row-' + id);
+  if (row) { row.classList.add('just-reset'); setTimeout(() => row.classList.remove('just-reset'), 700); }
+  renderAll();
+  showNotif(`🔄 פגיעות ${p.name} אופסו`, 'reset');
+}
+
+// ─── HIT REGISTRATION ────────────────────────────────────────────────────────
+function registerHit() {
+  const attackerSel = document.getElementById('attacker-select');
+  const targetSel = document.getElementById('target-select');
+  const ballSel = document.getElementById('ball-select');
+  const attackerId = attackerSel.value ? parseFloat(attackerSel.value) : null;
+  const targetId = parseFloat(targetSel.value);
+  const ballIdx = parseInt(ballSel.value);
+
+  if (!targetSel.value) { showNotif('⚠️ בחר מותקף', 'reset'); return; }
+  if (attackerId && attackerId === targetId) { showNotif('⚠️ שחקן לא יכול לפגוע בעצמו', 'reset'); return; }
+
+  const target = players.find(p => p.id === targetId);
+  if (!target || target.eliminated) return;
+
+  // Mark hit on target
+  target.hits[ballIdx] = true;
+
+  // Check if target is eliminated (all 3 hits)
+  const allHit = target.hits.every(Boolean);
+
+  if (allHit) {
+    // Check comeback rule
+    const prevEliminated = eliminatedByMap[targetId] || [];
+    // Check if attacker was previously eliminated by target
+    // Comeback: if target had eliminated anyone, they come back
+    
+    // Who eliminated target's victims?
+    // If attacker (or anyone) eliminates a player who previously eliminated others,
+    // those others come back. Let's implement: when target is "eliminated",
+    // check if there's a prior eliminator chain.
+
+    // Eliminate target
+    target.eliminated = true;
+    if (attackerId) {
+      target.eliminatedBy = attackerId;
+      if (!eliminatedByMap[attackerId]) eliminatedByMap[attackerId] = [];
+      eliminatedByMap[attackerId].push(targetId);
+
+      const attacker = players.find(p => p.id === attackerId);
+      const attackerName = attacker ? attacker.name : 'שחקן';
+
+      // Comeback: anyone that target had previously eliminated comes back
+      const targetVictims = eliminatedByMap[targetId] || [];
+      if (targetVictims.length > 0) {
+        // Target is NOT eliminated; instead, victims come back
+        target.eliminated = false;
+        target.hits = [false, false, false];
+        targetVictims.forEach(vid => {
+          const victim = players.find(p => p.id === vid);
+          if (victim) {
+            victim.eliminated = false;
+            victim.hits = [false, false, false];
+            victim.eliminatedBy = null;
+          }
+        });
+        eliminatedByMap[targetId] = [];
+        showNotif(`💫 קאמבק! ${target.name} לא הודח – הקורבנות שלו חוזרים!`, 'comeback');
+      } else {
+        // Normal elimination
+        // Reset attacker's own hit progress
+        if (attacker) {
+          const prevHits = attacker.hits.filter(Boolean).length;
+          attacker.hits = [false, false, false];
+          showNotif(`🏆 ${attackerName} הדיח את ${target.name}!`, 'eliminated');
+        }
+        // Check win condition
+        setTimeout(checkWin, 100);
+      }
+    } else {
+      // No specific attacker
+      target.eliminated = true;
+      showNotif(`❌ ${target.name} הודח!`, 'eliminated');
+      setTimeout(checkWin, 100);
+    }
+
+    // If attacker exists, reset all their accumulated hits on others
+    if (attackerId) {
+      const attacker = players.find(p => p.id === attackerId);
+      // (hits are per-player on target, this resets attacker's hits slate – already done above)
+    }
+  } else {
+    // Hit registered, but not eliminated yet
+    const ballNames = ['ירוק (1)', 'צהוב (2)', 'אדום (3)'];
+    const hitsCount = target.hits.filter(Boolean).length;
+    showNotif(`💥 פגיעה ${hitsCount}/3 על ${target.name} עם כדור ${ballNames[ballIdx]}`, 'hit');
+
+    // NEW MECHANIC: When attacker hits someone, reset all hits previously dealt to the attacker
+    if (attackerId) {
+      const attacker = players.find(p => p.id === attackerId);
+      if (attacker && attacker.hits.some(Boolean)) {
+        const prevHits = attacker.hits.filter(Boolean).length;
+        attacker.hits = [false, false, false];
+        const row = document.getElementById('row-' + attackerId);
+        if (row) { row.classList.add('just-reset'); setTimeout(() => row.classList.remove('just-reset'), 700); }
+        showNotif(`🔄 הכן את ${attacker.name} - כל הפגיעות שלך אופסו!`, 'reset');
+      }
+    }
+  }
+
+  renderAll();
+}
+
+function checkWin() {
+  const alive = players.filter(p => !p.eliminated);
+  if (players.length >= 2 && alive.length === 1) {
+    showNotif(`🏆🎉 ${alive[0].name} ניצח את המשחק!`, 'win');
+  }
+}
+
+// ─── QUICK HIT (click on hit circles) ────────────────────────────────────────
+function toggleHit(playerId, ballIdx) {
+  const p = players.find(x => x.id === playerId);
+  if (!p || p.eliminated) return;
+  p.hits[ballIdx] = !p.hits[ballIdx];
+  const allHit = p.hits.every(Boolean);
+  if (allHit) {
+    p.eliminated = true;
+    showNotif(`❌ ${p.name} הודח!`, 'eliminated');
+    setTimeout(checkWin, 100);
+  }
+  renderAll();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderPlayers();
+  updateSelects();
+  updateStatus();
+}
+
+function updateStatus() {
+  const alive = players.filter(p => !p.eliminated).length;
+  const total = players.length;
+  const el = document.getElementById('game-status');
+  if (total === 0) {
+    el.textContent = 'הוסיפו שחקנים כדי להתחיל';
+  } else if (alive === 1) {
+    const winner = players.find(p => !p.eliminated);
+    el.textContent = `🏆 ${winner.name} ניצח!`;
+  } else {
+    el.textContent = `${alive} שחקנים פעילים מתוך ${total}`;
+  }
+}
+
+function updateSelects() {
+  const attackerSel = document.getElementById('attacker-select');
+  const targetSel = document.getElementById('target-select');
+  const prevAttacker = attackerSel.value;
+  const prevTarget = targetSel.value;
+
+  attackerSel.innerHTML = '<option value="">בחר תוקף...</option>';
+  targetSel.innerHTML = '<option value="">בחר מותקף...</option>';
+
+  players.filter(p => !p.eliminated).forEach(p => {
+    const opt1 = document.createElement('option');
+    opt1.value = p.id; opt1.textContent = p.name;
+    attackerSel.appendChild(opt1);
+
+    const opt2 = document.createElement('option');
+    opt2.value = p.id; opt2.textContent = p.name;
+    targetSel.appendChild(opt2);
+  });
+
+  if (prevAttacker) attackerSel.value = prevAttacker;
+  if (prevTarget) targetSel.value = prevTarget;
+}
+
+function renderPlayers() {
+  const list = document.getElementById('players-list');
+  const empty = document.getElementById('empty-state');
+  
+  if (players.length === 0) {
+    empty.style.display = 'block'; list.innerHTML = ''; return;
+  }
+  empty.style.display = 'none';
+
+  // Sort: active first, then eliminated
+  const sorted = [...players].sort((a, b) => {
+    if (a.eliminated !== b.eliminated) return a.eliminated ? 1 : -1;
+    const ha = a.hits.filter(Boolean).length;
+    const hb = b.hits.filter(Boolean).length;
+    return hb - ha;
+  });
+
+  const alive = players.filter(p => !p.eliminated);
+  const isWinner = alive.length === 1 && players.length >= 2 ? alive[0].id : null;
+
+  list.innerHTML = sorted.map((p, idx) => {
+    const hitCount = p.hits.filter(Boolean).length;
+    const ballColors = ['hit-0', 'hit-1', 'hit-2'];
+    const ballEmojis = ['1', '2', '3'];
+
+    const hitCircles = [0, 1, 2].map(i => 
+      `<div class="hit-circle ${ballColors[i]} ${p.hits[i] ? 'filled' : ''} ${p.eliminated ? 'eliminated' : ''}"
+            onclick="${!p.eliminated ? `toggleHit(${p.id}, ${i})` : ''}"
+            title="כדור ${i+1}">${p.hits[i] ? '✓' : ballEmojis[i]}</div>`
+    ).join('');
+
+    const rankEl = idx < 3 && !p.eliminated ? 
+      `<div class="player-rank rank-${idx+1}">${['🥇','🥈','🥉'][idx]}</div>` :
+      `<div class="player-rank">${idx+1}</div>`;
+
+    const statusText = p.eliminated ? '❌ הודח' :
+      hitCount === 0 ? '⚡ פעיל' :
+      hitCount === 1 ? `💥 פגיעה אחת` :
+      `💥 ${hitCount} פגיעות`;
+
+    const winnerBadge = (isWinner === p.id) ? '<div class="winner-badge">🏆 מנצח!</div>' : '';
+
+    return `<div class="player-row ${isWinner === p.id ? 'is-winner' : ''} ${p.eliminated ? 'is-eliminated' : ''}" id="row-${p.id}">
+      ${winnerBadge}
+      ${rankEl}
+      <div class="player-info">
+        <div class="player-name">${p.name}</div>
+        <div class="player-status">${statusText}</div>
+      </div>
+      <div class="hits-display">${hitCircles}</div>
+      <div class="player-actions">
+        <button class="pa-btn pa-btn-reset-player" onclick="resetPlayerHits(${p.id})" title="אפס פגיעות">↺</button>
+        <button class="pa-btn pa-btn-del" onclick="removePlayer(${p.id})" title="הסר שחקן">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clearAll() {
+  if (players.length === 0) return;
+  if (!confirm('האם לנקות את כל השחקנים ולהתחיל מחדש?')) return;
+  players = [];
+  eliminatedByMap = {};
+  renderAll();
+  showNotif('🗑️ המשחק נוקה', 'reset');
+}
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
