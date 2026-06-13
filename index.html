@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BOLHTREY – ספר החוקים הרשמי</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&family=Black+Han+Sans&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -847,7 +849,7 @@ details[open] summary::after { transform: rotate(45deg); }
 
 <!-- STICKY NAV -->
 <nav class="sticky-nav">
-  <a href="#top" class="sticky-logo">BOLHTREY</a>
+  <a href="#top" class="sticky-logo"><img src="icon.png" alt="BOLHTREY" style="height:2.4rem;width:auto;vertical-align:middle;border-radius:4px;"></a>
   <div class="sticky-links">
     <a href="#goal" class="sticky-link">המטרה</a>
     <a href="#balls" class="sticky-link">הכדורים</a>
@@ -870,6 +872,7 @@ details[open] summary::after { transform: rotate(45deg); }
   </div>
   <div style="position:relative;z-index:1;">
     <div class="hero-tag">🏆 המשחק הרשמי לטרמפולינות</div>
+    <img src="icon.png" alt="BOLHTREY icon" style="width:80px;height:80px;border-radius:16px;margin-bottom:1rem;box-shadow:0 0 32px rgba(100,80,255,0.4);">
     <h1 class="hero-logo">BOLHTREY</h1>
     <p class="hero-subtitle">ספר החוקים הרשמי</p>
     <p class="hero-authors">הומצא על ידי <span>איתן וכרמל פרבר</span></p>
@@ -890,6 +893,8 @@ details[open] summary::after { transform: rotate(45deg); }
 </section>
 
 <div class="led-strip"></div>
+
+
 <div class="divider"></div>
 
 <!-- GOAL -->
@@ -968,7 +973,7 @@ details[open] summary::after { transform: rotate(45deg); }
         <div class="ball-stats">
           <div class="stat">
             <div class="stat-label">קוטר</div>
-            <div class="stat-value" style="color:var(--ball2);">18 ס"מ</div>
+            <div class="stat-value" style="color:var(--ball2);">22 ס"מ</div>
           </div>
           <div class="stat">
             <div class="stat-label">משקל</div>
@@ -998,7 +1003,7 @@ details[open] summary::after { transform: rotate(45deg); }
         <div class="ball-stats">
           <div class="stat">
             <div class="stat-label">קוטר</div>
-            <div class="stat-value" style="color:var(--ball3);">22 ס"מ</div>
+            <div class="stat-value" style="color:var(--ball3);">28 ס"מ</div>
           </div>
           <div class="stat">
             <div class="stat-label">משקל</div>
@@ -1066,9 +1071,27 @@ details[open] summary::after { transform: rotate(45deg); }
 
     <!-- Olympic tech -->
     <div style="margin-top:2rem;">
-      <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;">⚡ מערכת האפקטים האלקטרונית (גרסה אולימפית)</h3>
+      <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;">⚡ מערכת הגילוי והאפקטים האלקטרונית (גרסה אולימפית)</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.8rem;margin-bottom:1.5rem;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:1.1rem;">
+          <div style="font-weight:700;margin-bottom:0.5rem;">🧥 חליפת החיישנים</div>
+          <div style="font-size:0.85rem;color:var(--muted);">השחקנים לובשים מדים רשמיים עם חוטים וסנסורים גמישים. נגיעת הכדור בבגד סוגרת מעגל חשמלי ומדווחת על פגיעה מדויקת.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:1.1rem;">
+          <div style="font-weight:700;margin-bottom:0.5rem;">🧦 גרבי האחיזה החכמות</div>
+          <div style="font-size:0.85rem;color:var(--muted);">שני חיישנים: אחד לפגיעת כדור ברגל, אחד לנגיעה במשטח. כל עוד השחקן דורך – חיישן הרגל מנוטרל! ניתן לפגוע ברגל <strong>רק כשהרגליים באוויר</strong>.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:1.1rem;">
+          <div style="font-weight:700;margin-bottom:0.5rem;">🔢 סימון שחקנים רשמי</div>
+          <div style="font-size:0.85rem;color:var(--muted);">על מדי כל שחקן מופיע סימון/מספר זיהוי ייחודי ובולט, לצורך שפיטה, קריינות ומעקב בשידור.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:1.1rem;">
+          <div style="font-weight:700;margin-bottom:0.5rem;">📡 זיהוי סוג הכדור</div>
+          <div style="font-size:0.85rem;color:var(--muted);">בתוך כל אחד מ-3 הכדורים מושתל שבב ייחודי המשדר את זהותו בעת פגיעה, לוודא פגיעה ב-3 כדורים שונים (1, 2 ו-3).</div>
+        </div>
+      </div>
       <div class="accordion-body" style="padding:0;border:none;margin:0 0 1rem;">
-        <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;">מסגרת ה-LED מגיבה לאירועי המשחק בזמן אמת:</p>
+        <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;">💡 מסגרת ה-LED מגיבה לאירועי המשחק בזמן אמת:</p>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.8rem;">
         <div style="background:rgba(57,255,20,0.06);border:1px solid rgba(57,255,20,0.2);border-radius:10px;padding:1rem;">
@@ -1301,6 +1324,7 @@ details[open] summary::after { transform: rotate(45deg); }
 
 <!-- FOOTER -->
 <footer>
+  <img src="icon.png" alt="BOLHTREY" style="width:48px;height:48px;border-radius:10px;margin-bottom:0.5rem;opacity:0.85;">
   <div class="footer-logo">BOLHTREY</div>
   <p>© כל הזכויות שמורות לאיתן פרבר וכרמל פרבר, 2026</p>
   <p style="margin-top:0.4rem;">המשחק הרשמי לטרמפולינות – ולכל משטח אחר</p>
