@@ -577,6 +577,48 @@ body {
 .score-input:focus { outline: none; border-color: var(--accent); }
 .score-input::placeholder { color: var(--muted); }
 
+/* ─── Autocomplete (Google-style) ─── */
+.autocomplete-wrap { position: relative; }
+.ac-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0; left: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  z-index: 50;
+  max-height: 260px;
+  overflow-y: auto;
+  display: none;
+  padding: 0.3rem;
+}
+.ac-suggestions.open { display: block; }
+.ac-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: background 0.12s;
+}
+.ac-item:hover, .ac-item.active { background: rgba(108,99,255,0.18); }
+.ac-item .ac-num {
+  flex-shrink: 0;
+  min-width: 34px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--accent);
+  background: rgba(108,99,255,0.12);
+  border-radius: 5px;
+  padding: 0.15rem 0.35rem;
+}
+.ac-item .ac-name { flex: 1; }
+.ac-item .ac-name b { color: #fff; }
+.ac-empty { padding: 0.6rem 0.7rem; color: var(--muted); font-size: 0.85rem; }
+
 .score-btn {
   padding: 0.65rem 1.4rem;
   border-radius: 8px;
@@ -1575,8 +1617,10 @@ details[open] summary::after { transform: rotate(45deg); }
       <div class="score-controls">
         <div class="input-group">
           <div class="input-label">הוסף שחקן</div>
-          <input class="score-input" id="player-name-input" type="text" placeholder="שם השחקן..." list="registered-users-list" autocomplete="off" onkeydown="if(event.key==='Enter') addPlayer()" />
-          <datalist id="registered-users-list"></datalist>
+          <div class="autocomplete-wrap">
+            <input class="score-input" id="player-name-input" type="text" placeholder="שם השחקן..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac-suggestions" oninput="onPlayerInput()" onkeydown="onPlayerKeydown(event)" onfocus="onPlayerInput()" />
+            <div class="ac-suggestions" id="ac-suggestions" role="listbox"></div>
+          </div>
         </div>
         <button class="score-btn score-btn-add" onclick="addPlayer()">➕ הוסף שחקן</button>
         <button class="score-btn score-btn-add" id="add-me-btn" onclick="addMeToGame()" style="display:none;background:rgba(108,99,255,0.2);border:1px solid rgba(108,99,255,0.4);color:#b0abff;">👤 הוסף אותי</button>
@@ -1854,24 +1898,130 @@ async function loadPlayerNum(uid) {
 }
 
 const registeredUsersMap = {}; // displayName -> playerNum
+let registeredUsers = []; // [{ name, num }]
 
 async function loadRegisteredUsers() {
   try {
     const snapshot = await db.collection('users').get();
-    const datalist = document.getElementById('registered-users-list');
-    datalist.innerHTML = '';
+    console.log('[autocomplete] users docs fetched:', snapshot.size);
+    registeredUsers = [];
     snapshot.forEach(doc => {
       const data = doc.data();
+      console.log('[autocomplete] doc', doc.id, data);
       const name = data.displayName;
       if (name) {
-        registeredUsersMap[name] = data.playerNum || null;
-        const opt = document.createElement('option');
-        opt.value = name;
-        datalist.appendChild(opt);
+        const num = data.playerNum || null;
+        registeredUsersMap[name] = num;
+        registeredUsers.push({ name, num });
       }
     });
-  } catch {}
+    registeredUsers.sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    console.log('[autocomplete] registeredUsers ready:', registeredUsers);
+  } catch (e) {
+    console.error('[autocomplete] loadRegisteredUsers FAILED:', e.code, e.message);
+  }
 }
+
+// ─── PLAYER NAME AUTOCOMPLETE (Google-style) ─────────────────────────
+let acActiveIndex = -1; // highlighted suggestion
+let acMatches = [];      // current filtered list
+
+function acEscapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
+function onPlayerInput() {
+  const input = document.getElementById('player-name-input');
+  const q = input.value.trim().toLowerCase();
+  // names already in the game shouldn't be suggested again
+  const inGame = new Set(players.map(p => p.name));
+  acMatches = registeredUsers.filter(u => !inGame.has(u.name) && (q === '' || u.name.toLowerCase().includes(q)));
+  acActiveIndex = -1;
+  renderSuggestions(q);
+}
+
+function renderSuggestions(q) {
+  const box = document.getElementById('ac-suggestions');
+  const input = document.getElementById('player-name-input');
+  if (acMatches.length === 0) {
+    if (document.activeElement === input && q !== '') {
+      box.innerHTML = '<div class="ac-empty">אין התאמות — אפשר להוסיף שם חדש</div>';
+      box.classList.add('open');
+      input.setAttribute('aria-expanded', 'true');
+    } else {
+      closeSuggestions();
+    }
+    return;
+  }
+  box.innerHTML = acMatches.map((u, i) => {
+    let display = acEscapeHtml(u.name);
+    if (q) {
+      const idx = u.name.toLowerCase().indexOf(q);
+      if (idx !== -1) {
+        const before = acEscapeHtml(u.name.slice(0, idx));
+        const match = acEscapeHtml(u.name.slice(idx, idx + q.length));
+        const after = acEscapeHtml(u.name.slice(idx + q.length));
+        display = `${before}<b>${match}</b>${after}`;
+      }
+    }
+    const num = u.num ? `<span class="ac-num">#${u.num}</span>` : `<span class="ac-num" style="opacity:0.4;">—</span>`;
+    return `<div class="ac-item${i === acActiveIndex ? ' active' : ''}" role="option" data-i="${i}" onmousedown="acPick(${i})">${num}<span class="ac-name">${display}</span></div>`;
+  }).join('');
+  box.classList.add('open');
+  input.setAttribute('aria-expanded', 'true');
+}
+
+function acPick(i) {
+  const u = acMatches[i];
+  if (!u) return;
+  const input = document.getElementById('player-name-input');
+  input.value = u.name;
+  closeSuggestions();
+  addPlayer();
+}
+
+function closeSuggestions() {
+  const box = document.getElementById('ac-suggestions');
+  const input = document.getElementById('player-name-input');
+  box.classList.remove('open');
+  box.innerHTML = '';
+  acActiveIndex = -1;
+  input.setAttribute('aria-expanded', 'false');
+}
+
+function onPlayerKeydown(e) {
+  const box = document.getElementById('ac-suggestions');
+  const open = box.classList.contains('open') && acMatches.length > 0;
+  if (e.key === 'ArrowDown') {
+    if (!open) { onPlayerInput(); return; }
+    e.preventDefault();
+    acActiveIndex = (acActiveIndex + 1) % acMatches.length;
+    renderSuggestions(document.getElementById('player-name-input').value.trim().toLowerCase());
+    scrollActiveIntoView();
+  } else if (e.key === 'ArrowUp') {
+    if (!open) return;
+    e.preventDefault();
+    acActiveIndex = (acActiveIndex - 1 + acMatches.length) % acMatches.length;
+    renderSuggestions(document.getElementById('player-name-input').value.trim().toLowerCase());
+    scrollActiveIntoView();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (open && acActiveIndex >= 0) { acPick(acActiveIndex); }
+    else { closeSuggestions(); addPlayer(); }
+  } else if (e.key === 'Escape') {
+    closeSuggestions();
+  }
+}
+
+function scrollActiveIntoView() {
+  const el = document.querySelector('.ac-item.active');
+  if (el) el.scrollIntoView({ block: 'nearest' });
+}
+
+// close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.autocomplete-wrap')) closeSuggestions();
+});
 
 async function isNumTaken(num) {
   const doc = await db.collection('playerNumbers').doc(String(num)).get();
@@ -1982,6 +2132,7 @@ function addPlayer() {
   const num = (name in registeredUsersMap) ? registeredUsersMap[name] : null;
   players.push({ id: Date.now() + Math.random(), num, name, hits: [false, false, false], eliminated: false, eliminatedBy: null });
   input.value = '';
+  closeSuggestions();
   renderAll();
   showNotif(`✅ ${num ? `#${num} ` : ''}${name} נוסף למשחק`, 'hit');
 }
@@ -2200,7 +2351,7 @@ function renderPlayers() {
   list.innerHTML = sorted.map((p, idx) => {
     const hitCount = p.hits.filter(Boolean).length;
     const ballColors = ['hit-0', 'hit-1', 'hit-2'];
-    const ballShortNames = ['חץ', 'קלסי', 'תותח'];
+    const ballShortNames = ['החץ', 'הקלאסי', 'התותח'];
     const ballFullNames = ['החץ 🟢', 'הקלאסי 🟡', 'התותח 🔴'];
 
     const hitCircles = [0, 1, 2].map(i =>
