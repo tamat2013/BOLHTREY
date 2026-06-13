@@ -17,6 +17,9 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&family=Black+Han+Sans&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 :root {
   --ball1: #39ff14;
@@ -640,6 +643,25 @@ body {
 .player-rank.rank-2 { background: rgba(192,192,192,0.15); color: silver; }
 .player-rank.rank-3 { background: rgba(205,127,50,0.15); color: #cd7f32; }
 
+.player-number {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  background: rgba(108,99,255,0.12);
+  border: 1.5px solid rgba(108,99,255,0.3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.player-number-val {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem; font-weight: 900;
+  color: #b0abff;
+}
+.player-number-label {
+  font-size: 0.5rem; color: var(--muted); letter-spacing: 1px; margin-top: 1px;
+}
+
+
 .player-info { flex: 1; min-width: 0; }
 .player-name { font-weight: 700; font-size: 1rem; }
 .player-status {
@@ -808,6 +830,149 @@ details[open] summary::after { transform: rotate(45deg); }
   margin-top: 0;
 }
 
+/* ── AUTH MODAL ── */
+.auth-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.auth-overlay.open { opacity: 1; pointer-events: all; }
+
+.auth-modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.2rem;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s;
+}
+.auth-overlay.open .auth-modal { transform: translateY(0); }
+
+.auth-close {
+  position: absolute; top: 1rem; left: 1rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  cursor: pointer; color: var(--muted);
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.auth-close:hover { color: var(--text); background: rgba(255,255,255,0.1); }
+
+.auth-title {
+  font-size: 1.4rem; font-weight: 800; margin-bottom: 0.4rem; text-align: center;
+}
+.auth-sub {
+  font-size: 0.85rem; color: var(--muted); text-align: center; margin-bottom: 1.8rem;
+}
+
+.auth-view { display: none; }
+.auth-view.active { display: block; }
+
+.auth-google-btn {
+  width: 100%; padding: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: var(--text); font-family: 'Rubik', sans-serif;
+  font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+  transition: all 0.2s; margin-bottom: 1rem;
+}
+.auth-google-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+
+.auth-divider {
+  display: flex; align-items: center; gap: 0.8rem;
+  color: var(--muted); font-size: 0.8rem; margin-bottom: 1rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.auth-input {
+  width: 100%; padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text); font-family: 'Rubik', sans-serif; font-size: 0.9rem;
+  transition: border-color 0.2s; margin-bottom: 0.8rem; display: block;
+  direction: ltr;
+}
+.auth-input:focus { outline: none; border-color: var(--accent); }
+.auth-input::placeholder { color: var(--muted); }
+
+.auth-submit-btn {
+  width: 100%; padding: 0.8rem;
+  border-radius: 10px; border: none;
+  background: var(--accent); color: white;
+  font-family: 'Rubik', sans-serif; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-top: 0.4rem;
+}
+.auth-submit-btn:hover { background: #7b73ff; transform: translateY(-1px); }
+.auth-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.auth-toggle-link {
+  text-align: center; margin-top: 1rem;
+  font-size: 0.85rem; color: var(--muted);
+}
+.auth-toggle-link a {
+  color: var(--accent); cursor: pointer; text-decoration: none; font-weight: 600;
+}
+.auth-toggle-link a:hover { text-decoration: underline; }
+
+.auth-error {
+  background: rgba(255,34,0,0.08);
+  border: 1px solid rgba(255,34,0,0.25);
+  border-radius: 8px; padding: 0.6rem 0.9rem;
+  color: #ff6b6b; font-size: 0.83rem;
+  margin-bottom: 0.8rem; display: none;
+}
+.auth-success {
+  background: rgba(57,255,20,0.08);
+  border: 1px solid rgba(57,255,20,0.25);
+  border-radius: 8px; padding: 0.6rem 0.9rem;
+  color: var(--ball1); font-size: 0.83rem;
+  margin-bottom: 0.8rem; display: none; text-align: center;
+}
+
+/* User chip in nav */
+.nav-user {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  background: rgba(108,99,255,0.12);
+  border: 1px solid rgba(108,99,255,0.3);
+  border-radius: 100px;
+  font-size: 0.8rem; color: var(--text);
+  cursor: pointer; transition: all 0.2s;
+}
+.nav-user:hover { background: rgba(108,99,255,0.2); }
+.nav-user img { width: 22px; height: 22px; border-radius: 50%; }
+.nav-user-initial {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700;
+}
+
+.nav-auth-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  font-size: 0.8rem; font-weight: 600;
+  background: var(--accent); color: white;
+  border: none; cursor: pointer;
+  transition: all 0.2s; font-family: 'Rubik', sans-serif;
+}
+.nav-auth-btn:hover { background: #7b73ff; }
+
 /* NAV sticky */
 .sticky-nav {
   position: sticky;
@@ -844,6 +1009,74 @@ details[open] summary::after { transform: rotate(45deg); }
 </head>
 <body>
 
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuthModal()">✕</button>
+
+    <!-- View: choose method -->
+    <div class="auth-view active" id="auth-view-choose">
+      <div class="auth-title">👋 ברוכים הבאים</div>
+      <div class="auth-sub">התחברו כדי לשמור את ניקוד המשחקים שלכם</div>
+      <button class="auth-google-btn" onclick="signInGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        המשך עם Google
+      </button>
+      <div class="auth-divider">או</div>
+      <button class="auth-google-btn" onclick="showView('auth-view-email')">
+        ✉️ המשך עם אימייל וסיסמה
+      </button>
+    </div>
+
+    <!-- View: email/password -->
+    <div class="auth-view" id="auth-view-email">
+      <div class="auth-title" id="email-view-title">🔐 התחברות</div>
+      <div class="auth-sub" id="email-view-sub">הזן פרטים להתחברות</div>
+      <div class="auth-error" id="email-error"></div>
+      <input class="auth-input" id="auth-email" type="email" placeholder="כתובת אימייל" autocomplete="email" />
+      <input class="auth-input" id="auth-password" type="password" placeholder="סיסמה (לפחות 6 תווים)" autocomplete="current-password" />
+      <input class="auth-input" id="auth-name" type="text" placeholder="שם תצוגה" autocomplete="name" style="display:none;" />
+      <button class="auth-submit-btn" id="email-submit-btn" onclick="submitEmailAuth()">התחבר</button>
+      <div class="auth-toggle-link">
+        <span id="toggle-text">אין לך חשבון?</span> <a onclick="toggleEmailMode()"><span id="toggle-link-text">הרשם עכשיו</span></a>
+      </div>
+      <div class="auth-toggle-link" style="margin-top:0.5rem;">
+        <a onclick="showView('auth-view-forgot')">שכחת סיסמה?</a>
+        &nbsp;·&nbsp;
+        <a onclick="showView('auth-view-choose')">חזור</a>
+      </div>
+    </div>
+
+    <!-- View: forgot password -->
+    <div class="auth-view" id="auth-view-forgot">
+      <div class="auth-title">🔑 איפוס סיסמה</div>
+      <div class="auth-sub">נשלח לך קישור לאיפוס סיסמה</div>
+      <div class="auth-error" id="forgot-error"></div>
+      <div class="auth-success" id="forgot-success">📬 קישור נשלח לאימייל שלך!</div>
+      <input class="auth-input" id="forgot-email" type="email" placeholder="כתובת אימייל" autocomplete="email" />
+      <button class="auth-submit-btn" onclick="sendPasswordReset()">שלח קישור לאיפוס</button>
+      <div class="auth-toggle-link" style="margin-top:1rem;">
+        <a onclick="showView('auth-view-email')">חזור להתחברות</a>
+      </div>
+    </div>
+
+    <!-- View: signed in -->
+    <div class="auth-view" id="auth-view-user">
+      <div style="text-align:center;">
+        <div id="user-avatar-modal" style="margin:0 auto 1rem;width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;color:white;overflow:hidden;"></div>
+        <div class="auth-title" style="margin-bottom:0.3rem;" id="user-name-modal">שלום!</div>
+        <div class="auth-sub" id="user-email-modal"></div>
+
+        <div id="profile-num-area" style="margin:1.2rem 0;padding:1rem;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2);border-radius:12px;"></div>
+
+        <button class="auth-submit-btn" onclick="signOutUser()" style="background:rgba(255,34,0,0.15);border:1px solid rgba(255,34,0,0.3);color:var(--ball3);">
+          🚪 התנתק
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- NOTIFICATION -->
 <div class="notification" id="notification"></div>
 
@@ -857,6 +1090,9 @@ details[open] summary::after { transform: rotate(45deg); }
     <a href="#arena" class="sticky-link">הזירה</a>
     <a href="#rules" class="sticky-link">חוקים</a>
     <a href="#scoreboard" class="sticky-link">ניקוד</a>
+  </div>
+  <div id="nav-auth-area">
+    <button class="nav-auth-btn" onclick="openAuthModal()">🔑 התחבר</button>
   </div>
 </nav>
 
@@ -1340,6 +1576,7 @@ details[open] summary::after { transform: rotate(45deg); }
           <input class="score-input" id="player-name-input" type="text" placeholder="שם השחקן..." onkeydown="if(event.key==='Enter') addPlayer()" />
         </div>
         <button class="score-btn score-btn-add" onclick="addPlayer()">➕ הוסף שחקן</button>
+        <button class="score-btn score-btn-add" id="add-me-btn" onclick="addMeToGame()" style="display:none;background:rgba(108,99,255,0.2);border:1px solid rgba(108,99,255,0.4);color:#b0abff;">👤 הוסף אותי</button>
 
         <div style="width:1px;height:40px;background:var(--border);align-self:flex-end;margin:0 0.5rem;"></div>
 
@@ -1406,6 +1643,285 @@ details[open] summary::after { transform: rotate(45deg); }
 </footer>
 
 <script>
+// ─── FIREBASE CONFIG ─────────────────────────────────────────────────────────
+// ⚠️ החלף את הערכים האלה בערכים מה-Firebase Console שלך!
+const firebaseConfig = {
+  apiKey: "AIzaSyAV-g1uRx-7rknNC258hoDYRJmtIlWNtHU",
+  authDomain: "bolhtrey.firebaseapp.com",
+  projectId: "bolhtrey",
+  storageBucket: "bolhtrey.firebasestorage.app",
+  messagingSenderId: "368912206062",
+  appId: "1:368912206062:web:4520fb085261a5b7c80bff",
+  measurementId: "G-GHQ35N5JWP"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// ─── AUTH STATE ───────────────────────────────────────────────────────────────
+let currentUser = null;
+let currentUserNum = null;
+
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    currentUserNum = await loadPlayerNum(user.uid);
+    updateNavAuth(user);
+    if (document.getElementById('auth-overlay').classList.contains('open')) {
+      showView('auth-view-user');
+      updateUserView(user);
+    }
+  } else {
+    currentUserNum = null;
+    updateNavAuth(null);
+  }
+  document.getElementById('add-me-btn').style.display = user ? 'inline-flex' : 'none';
+});
+
+function updateNavAuth(user) {
+  const area = document.getElementById('nav-auth-area');
+  if (!user) {
+    area.innerHTML = `<button class="nav-auth-btn" onclick="openAuthModal()">🔑 התחבר</button>`;
+  } else {
+    const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+    const avatarHtml = user.photoURL
+      ? `<img src="${user.photoURL}" alt="">`
+      : `<div class="nav-user-initial">${initial}</div>`;
+    area.innerHTML = `<div class="nav-user" onclick="openAuthModal()">
+      ${avatarHtml}
+      <span>${user.displayName || user.email.split('@')[0]}</span>
+    </div>`;
+  }
+}
+
+function updateUserView(user) {
+  const avatarEl = document.getElementById('user-avatar-modal');
+  const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+  avatarEl.innerHTML = user.photoURL
+    ? `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;">`
+    : initial;
+  document.getElementById('user-name-modal').textContent = `שלום, ${user.displayName || user.email.split('@')[0]}!`;
+  document.getElementById('user-email-modal').textContent = user.email;
+
+  const area = document.getElementById('profile-num-area');
+  const baseStyle = `font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;letter-spacing:1px;`;
+  if (currentUserNum) {
+    area.innerHTML = `
+      <div style="${baseStyle}">מספר השחקן שלך</div>
+      <div style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:#b0abff;letter-spacing:2px;">#${currentUserNum}</div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem;">המספר קבוע ולא ניתן לשינוי</div>`;
+  } else {
+    area.innerHTML = `
+      <div style="${baseStyle}">בחר מספר שחקן קבוע</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:0.6rem;">
+        <input id="profile-num-input" type="number" min="1" max="9999" placeholder="XXXX"
+          style="width:90px;padding:0.5rem;text-align:center;font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;background:rgba(255,255,255,0.06);border:1px solid rgba(108,99,255,0.4);border-radius:8px;color:#b0abff;"
+          onkeydown="if(event.key==='Enter') saveProfileNum()" />
+        <button onclick="rollDice()" title="מספר אקראי"
+          style="width:38px;height:38px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;">🎲</button>
+        <button onclick="saveProfileNum()"
+          style="padding:0.5rem 0.9rem;background:var(--accent);color:white;border:none;border-radius:8px;font-family:'Rubik',sans-serif;font-weight:600;cursor:pointer;font-size:0.85rem;">שמור</button>
+      </div>
+      <div id="profile-num-msg" style="font-size:0.78rem;color:var(--ball1);min-height:1rem;"></div>`;
+  }
+}
+
+// ─── AUTH MODAL CONTROLS ──────────────────────────────────────────────────────
+function openAuthModal() {
+  const overlay = document.getElementById('auth-overlay');
+  overlay.classList.add('open');
+  if (currentUser) {
+    showView('auth-view-user');
+    updateUserView(currentUser);
+  } else {
+    showView('auth-view-choose');
+  }
+}
+
+function closeAuthModal() {
+  document.getElementById('auth-overlay').classList.remove('open');
+  clearErrors();
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
+}
+
+function showView(id) {
+  document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  clearErrors();
+}
+
+function clearErrors() {
+  ['email-error','forgot-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display='none'; el.textContent=''; }
+  });
+  const s = document.getElementById('forgot-success');
+  if (s) s.style.display = 'none';
+}
+
+function showError(elId, msg) {
+  const el = document.getElementById(elId);
+  el.textContent = msg; el.style.display = 'block';
+}
+
+// ─── GOOGLE SIGN IN ───────────────────────────────────────────────────────────
+async function signInGoogle() {
+  try {
+    await auth.signInWithPopup(googleProvider);
+    closeAuthModal();
+    showNotif('✅ התחברת בהצלחה עם Google!', 'hit');
+  } catch (e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      showError('email-error', translateAuthError(e.code));
+      showView('auth-view-email');
+    }
+  }
+}
+
+// ─── EMAIL AUTH ───────────────────────────────────────────────────────────────
+let emailMode = 'login'; // 'login' | 'register'
+
+function toggleEmailMode() {
+  emailMode = emailMode === 'login' ? 'register' : 'login';
+  const isReg = emailMode === 'register';
+  document.getElementById('email-view-title').textContent = isReg ? '📝 הרשמה' : '🔐 התחברות';
+  document.getElementById('email-view-sub').textContent = isReg ? 'צור חשבון חדש' : 'הזן פרטים להתחברות';
+  document.getElementById('auth-name').style.display = isReg ? 'block' : 'none';
+  document.getElementById('email-submit-btn').textContent = isReg ? 'הרשם' : 'התחבר';
+  document.getElementById('toggle-text').textContent = isReg ? 'כבר יש לך חשבון?' : 'אין לך חשבון?';
+  document.getElementById('toggle-link-text').textContent = isReg ? 'התחבר' : 'הרשם עכשיו';
+  document.getElementById('auth-password').placeholder = isReg ? 'סיסמה (לפחות 6 תווים)' : 'סיסמה';
+  clearErrors();
+}
+
+async function submitEmailAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn = document.getElementById('email-submit-btn');
+  if (!email || !password) { showError('email-error', 'אנא מלא אימייל וסיסמה'); return; }
+
+  btn.disabled = true;
+  try {
+    if (emailMode === 'register') {
+      const name = document.getElementById('auth-name').value.trim();
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      if (name) await cred.user.updateProfile({ displayName: name });
+    } else {
+      await auth.signInWithEmailAndPassword(email, password);
+    }
+    closeAuthModal();
+    showNotif('✅ התחברת בהצלחה!', 'hit');
+  } catch (e) {
+    showError('email-error', translateAuthError(e.code));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ─── PASSWORD RESET ───────────────────────────────────────────────────────────
+async function sendPasswordReset() {
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!email) { showError('forgot-error', 'הזן כתובת אימייל'); return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    document.getElementById('forgot-success').style.display = 'block';
+    document.getElementById('forgot-error').style.display = 'none';
+  } catch (e) {
+    showError('forgot-error', translateAuthError(e.code));
+  }
+}
+
+// ─── FIRESTORE PLAYER NUM ─────────────────────────────────────────────────────
+async function loadPlayerNum(uid) {
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    return doc.exists ? (doc.data().playerNum || null) : null;
+  } catch { return null; }
+}
+
+async function isNumTaken(num) {
+  const doc = await db.collection('playerNumbers').doc(String(num)).get();
+  return doc.exists;
+}
+
+async function rollDice() {
+  const msg = document.getElementById('profile-num-msg');
+  if (msg) { msg.style.color = 'var(--muted)'; msg.textContent = '🎲 מחפש מספר פנוי...'; }
+  let attempts = 0;
+  while (attempts < 20) {
+    const num = Math.floor(Math.random() * 9999) + 1;
+    const taken = await isNumTaken(num);
+    if (!taken) {
+      const input = document.getElementById('profile-num-input');
+      if (input) input.value = num;
+      if (msg) { msg.style.color = 'var(--muted)'; msg.textContent = ''; }
+      return;
+    }
+    attempts++;
+  }
+  if (msg) { msg.style.color = '#ff6b6b'; msg.textContent = 'לא נמצא מספר פנוי, נסה שוב'; }
+}
+
+async function saveProfileNum() {
+  if (!currentUser) return;
+  const input = document.getElementById('profile-num-input');
+  const msg = document.getElementById('profile-num-msg');
+  const val = parseInt(input?.value);
+  if (!val || val < 1 || val > 9999) {
+    if (msg) { msg.style.color = '#ff6b6b'; msg.textContent = 'מספר תקין הוא 1–9999'; }
+    return;
+  }
+  if (msg) { msg.style.color = 'var(--muted)'; msg.textContent = 'בודק זמינות...'; }
+  try {
+    const taken = await isNumTaken(val);
+    if (taken) {
+      msg.style.color = '#ff6b6b'; msg.textContent = `המספר ${val} כבר תפוס – בחר אחר`; return;
+    }
+    await db.collection('playerNumbers').doc(String(val)).set({ uid: currentUser.uid });
+    await db.collection('users').doc(currentUser.uid).set({ playerNum: val }, { merge: true });
+    currentUserNum = val;
+    updateUserView(currentUser);
+    updateNavAuth(currentUser);
+  } catch { if (msg) { msg.style.color = '#ff6b6b'; msg.textContent = 'שגיאה בשמירה, נסה שוב'; } }
+}
+
+// ─── ADD ME TO GAME ───────────────────────────────────────────────────────────
+function addMeToGame() {
+  if (!currentUser) return;
+  const name = currentUser.displayName || currentUser.email.split('@')[0];
+  if (players.find(p => p.name === name)) { showNotif('אתה כבר במשחק!', 'reset'); return; }
+  players.push({ id: currentUser.uid, num: currentUserNum, name, hits: [false,false,false], eliminated: false, eliminatedBy: null });
+  renderAll();
+  showNotif(`✅ ${currentUserNum ? `#${currentUserNum} ` : ''}${name} נוסף למשחק`, 'hit');
+}
+
+// ─── SIGN OUT ─────────────────────────────────────────────────────────────────
+async function signOutUser() {
+  await auth.signOut();
+  closeAuthModal();
+  showNotif('👋 התנתקת בהצלחה', 'reset');
+}
+
+// ─── ERROR MESSAGES ───────────────────────────────────────────────────────────
+function translateAuthError(code) {
+  const map = {
+    'auth/user-not-found': 'לא נמצא משתמש עם אימייל זה',
+    'auth/wrong-password': 'סיסמה שגויה',
+    'auth/invalid-credential': 'אימייל או סיסמה שגויים',
+    'auth/email-already-in-use': 'כתובת אימייל זו כבר רשומה',
+    'auth/weak-password': 'הסיסמה חלשה מדי – לפחות 6 תווים',
+    'auth/invalid-email': 'כתובת אימייל לא תקינה',
+    'auth/too-many-requests': 'יותר מדי ניסיונות – נסה שוב מאוחר יותר',
+    'auth/network-request-failed': 'שגיאת רשת – בדוק את החיבור',
+  };
+  return map[code] || `שגיאה: ${code}`;
+}
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let players = []; // { id, name, hits:[false,false,false], eliminated:bool, eliminatedBy:id|null }
 let eliminatedByMap = {}; // id -> [list of eliminated player ids]
@@ -1434,7 +1950,7 @@ function addPlayer() {
   const name = input.value.trim();
   if (!name) return;
   if (players.find(p => p.name === name)) { showNotif('שחקן בשם זה כבר קיים!', 'reset'); return; }
-  players.push({ id: Date.now() + Math.random(), name, hits: [false, false, false], eliminated: false, eliminatedBy: null });
+  players.push({ id: Date.now() + Math.random(), num: null, name, hits: [false, false, false], eliminated: false, eliminatedBy: null });
   input.value = '';
   renderAll();
   showNotif(`✅ ${name} נוסף למשחק`, 'hit');
@@ -1617,12 +2133,13 @@ function updateSelects() {
   targetSel.innerHTML = '<option value="">בחר מותקף...</option>';
 
   players.filter(p => !p.eliminated).forEach(p => {
+    const label = p.num ? `#${p.num} ${p.name}` : p.name;
     const opt1 = document.createElement('option');
-    opt1.value = p.id; opt1.textContent = p.name;
+    opt1.value = p.id; opt1.textContent = label;
     attackerSel.appendChild(opt1);
 
     const opt2 = document.createElement('option');
-    opt2.value = p.id; opt2.textContent = p.name;
+    opt2.value = p.id; opt2.textContent = label;
     targetSel.appendChild(opt2);
   });
 
@@ -1675,6 +2192,10 @@ function renderPlayers() {
     return `<div class="player-row ${isWinner === p.id ? 'is-winner' : ''} ${p.eliminated ? 'is-eliminated' : ''}" id="row-${p.id}">
       ${winnerBadge}
       ${rankEl}
+      <div class="player-number">
+        <div class="player-number-val">${p.num ?? '?'}</div>
+        <div class="player-number-label">NUM</div>
+      </div>
       <div class="player-info">
         <div class="player-name">${p.name}</div>
         <div class="player-status">${statusText}</div>
